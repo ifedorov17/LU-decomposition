@@ -52,3 +52,35 @@ void LU_Master::proisv(std::vector<std::vector <double>> A, std::vector<std::vec
 			for (int k = 0; k < n; k++)
 				R[i][j] += A[i][k] * B[k][j];
 }
+
+std::vector<double> LU_Master::solver_1(std::vector<std::vector<double>>& L, std::vector<std::vector<double>>& U, std::vector<double>& b)
+{
+	int n = L.size();
+	std::vector<double> y(n); // делаем подстановку Ly = b и находим вектор y 
+	std::vector<double> x(n); // находим вектор решений 
+	double summ = 0.; 
+	// Формула следующая : y[i] = b[i] - ([сумма от j = 1 до i-1](L[i][j]*y[i]))   <- i-й элемент вектора y 
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < i - 1; j++)
+		{
+			summ += L[i][j] * y[j]; 
+		}
+		y[i] = b[i] - summ; 
+		summ = 0.; 
+	}
+	// после цикла есть вектор y и начинается обратная подстановка Ux = y; (т к U - верхнетреугольная то решение снизу вверх и формула
+	// получается x[n-1] = 1/u[n-1][n-1] * (y[n-1] - [сумма от j = 0 до i-1](U[n-i][n-j]*x[n-j]))
+	summ = 0.; 
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < i - 1; j++)
+		{
+			summ += U[n - i - 1 ][n - j - 1] * x[n - j - 1]; 
+		}
+		x[n - i-1] = 1 / U[n - i-1][n - i-1] * (y[n - i-1] - summ); 
+		summ = 0.; 
+	}
+
+	return x; 
+}
