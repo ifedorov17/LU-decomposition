@@ -1,7 +1,7 @@
 #include "LU_Master.h"
 
 
-const int threadNumber = 4;
+const int threadNumber = 2;
 
 void LU_Master::LU(CSR A, std::vector<std::vector<double>>& L, std::vector<std::vector<double>>& U)
 {
@@ -83,4 +83,78 @@ std::vector<double> LU_Master::solver_1(std::vector<std::vector<double>>& L, std
 	}
 
 	return x; 
+}
+
+CSR LU_Master::parse_matrix(std::string path)
+{
+	std::vector<double> aelem;
+
+
+	std::vector<int> jptr;
+	std::vector<int> iptr;
+	std::vector<std::tuple<int, int, double>> JoeMama;
+	
+
+
+	std::string tmp;
+	double num;
+
+	std::ifstream file_stream(path);
+	if (!file_stream.is_open())
+	{
+		std::cout << "ERROR" << std::endl;
+		throw(std::exception()); 
+	}
+	else
+	{
+		while (std::getline(file_stream, tmp))
+		{
+			std::regex num("[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)"); // [+\\-]{0,1}\\d+ 
+			/* std::transform(std::sregex_token_iterator{ tmp.cbegin(), tmp.cend(), num },
+				{},
+				std::back_inserter(numbers),
+				[](const auto& val)
+				{
+					return std::stod(val.str());
+				}
+			); */
+			std::sregex_token_iterator coca_cola(tmp.cbegin(), tmp.cend(), num);
+			int row = std::stoi(*coca_cola);
+			coca_cola++;
+			int col = std::stoi(*coca_cola);
+			coca_cola++;
+			double pepsi = std::stod(*coca_cola);
+			JoeMama.push_back(std::make_tuple(row, col, pepsi));
+		}
+		std::sort(
+			JoeMama.begin(),
+			JoeMama.end(),
+			[](const auto& a, const auto& b)
+			{
+				if (std::get<0>(a) == std::get<0>(b)) return (std::get<1>(a) < std::get<1>(b));
+				return	(std::get<0>(a) < std::get<0>(b));
+			}
+		);
+
+		int prev_row = -1; // для сани
+
+		for (int i = 0; i <  JoeMama.size(); i++)
+		{
+			aelem.push_back(std::get<2>(JoeMama[i]));
+			jptr.push_back(std::get<1>(JoeMama[i]));
+			if (std::get<0>(JoeMama[i]) != prev_row)
+			{
+				iptr.push_back(i+1);
+				prev_row = std::get<0>(JoeMama[i]); 
+			}
+		}
+	
+
+		
+		
+	}
+	
+	CSR ret(aelem, jptr, iptr, iptr.size() - 1);
+
+	return ret;
 }
