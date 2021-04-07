@@ -1,7 +1,7 @@
 #include "LU_Master.h"
-#include <omp.h>
 
-const int threadNumber = 2;
+
+const int threadNumber = 4;
 
 void LU_Master::LU(CSR A, std::vector<std::vector<double>>& L, std::vector<std::vector<double>>& U)
 {
@@ -62,7 +62,7 @@ std::vector<double> LU_Master::solver_1(std::vector<std::vector<double>>& L, std
 	// Формула следующая : y[i] = b[i] - ([сумма от j = 1 до i-1](L[i][j]*y[i]))   <- i-й элемент вектора y 
 	for (int i = 0; i < n; i++)
 	{
-		for (int j = 0; j < i - 1; j++)
+		for (int j = 0; j < i; j++)
 		{
 			summ += L[i][j] * y[j]; 
 		}
@@ -74,7 +74,7 @@ std::vector<double> LU_Master::solver_1(std::vector<std::vector<double>>& L, std
 	summ = 0.; 
 	for (int i = 0; i < n; i++)
 	{
-		for (int j = 0; j < i - 1; j++)
+		for (int j = 0; j < i; j++)
 		{
 			summ += U[n - i - 1 ][n - j - 1] * x[n - j - 1]; 
 		}

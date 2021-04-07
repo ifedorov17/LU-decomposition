@@ -49,7 +49,9 @@ int main()
 		Result[i].resize(csr.getSize());
 	}
 
+	std::cout << "*****"<< omp_get_wtime() << std::endl; 
 	LU_Master::LU(csr, L, U);
+	std::cout << "*****" << omp_get_wtime() << std::endl;
 
 	std::cout << std::endl << std::endl;
 	for (int i = 0; i < csr.getSize(); i++) {
@@ -67,9 +69,12 @@ int main()
 		std::cout << std::endl;
 	}
 
+
 	std::vector<double> result = LU_Master::solver_1(L, U, b);
 	std::cout << "Vector X:  " << std::endl;
-	std::for_each(result.begin(), result.end(), [](const double& n) { std::cout << " " << std::endl; }); 
+	std::for_each(result.begin(), result.end(), [](const double& n) { std::cout << n << " " << std::endl; }); 
 
+#pragma omp parallel 
+	std::cout << "My dick is really big "; 
 	return 0;
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "CSR.h"
+#include <omp.h>
 class LU_Master
 {
 public:
