@@ -64,7 +64,7 @@ void CSR::loadCSR(std::string& path)
 			this->iptr.push_back(num);
 		}
 
-		this->size = *(std::max_element(this->jptr.begin(), this->jptr.end()));  //размер матрицы - номер самого левого столбца
+		this->size = *(std::max_element(this->jptr.begin(), this->jptr.end()));
 	}
 }
 
@@ -98,6 +98,28 @@ void CSR::printCSR()
 int CSR::getSize()
 {
 	return size;
+}
+
+std::vector<double> CSR::operator*(const std::vector<double>& p_vec)
+{
+	std::vector<double> res;
+	res.reserve(this->size);
+	res.resize(this->size);
+
+	if (size != p_vec.size())
+		throw(std::exception("yikies!"));
+
+	#pragma omp parallel for schedule(static)
+	for (int row = 0; row < size; row++)
+	{
+		double elem = 0;
+		for (int col = iptr[row] - 1; col < iptr[row + 1] - 1; col++)
+		{
+			elem += p_vec[jptr[col] - 1] * aelem[col];
+		}
+		res[row] = elem;
+	}
+	return res;
 }
 
 

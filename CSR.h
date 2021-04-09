@@ -24,6 +24,7 @@ public:
 	void loadCSR(std::string& path);
 	void printCSR();
 	int getSize();
+	std::vector<double> operator* (const std::vector<double>& p_vec);
 
 };
 std::list<CSR> load(std::string& path);
