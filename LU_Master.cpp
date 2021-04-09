@@ -1,7 +1,7 @@
 #include "LU_Master.h"
 
 
-const int threadNumber = 2;
+const int threadNumber = 256;
 
 void LU_Master::LU(CSR A, std::vector<std::vector<double>>& L, std::vector<std::vector<double>>& U)
 {
@@ -26,7 +26,7 @@ void LU_Master::LU(CSR A, std::vector<std::vector<double>>& L, std::vector<std::
 
 	omp_set_num_threads(threadNumber);
 
-	#pragma omp parallel for
+	#pragma omp parallel for schedule(static)
 	for (int k = 1; k < n; k++)
 	{
 		for (int i = k - 1; i < n; i++)
@@ -45,7 +45,7 @@ void LU_Master::proisv(std::vector<std::vector <double>> A, std::vector<std::vec
 {
 	omp_set_num_threads(threadNumber);
 
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(static)
 
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < n; j++)
@@ -147,7 +147,9 @@ CSR LU_Master::parse_matrix(std::string path)
 				iptr.push_back(i+1);
 				prev_row = std::get<0>(JoeMama[i]); 
 			}
+
 		}
+		iptr.push_back(aelem.size()+1); 
 	
 
 		
